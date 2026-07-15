@@ -1,30 +1,19 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-# -------------------------------------------------------
-# Creación de la aplicación
-# -------------------------------------------------------
+
 app = FastAPI(
     title="Balanceador Round Robin",
     description="API REST para simular un balanceador de carga",
     version="1.0"
 )
 
-
-# -------------------------------------------------------
-# Modelo de datos
-# -------------------------------------------------------
-# Representa una petición enviada por el cliente.
-# Funciona como un DTO: define qué datos viajan entre
-# cliente y servidor.
 class RequestMessage(BaseModel):
     id: int
     description: str
 
 
-# -------------------------------------------------------
-# Lista de servidores simulados
-# -------------------------------------------------------
+
 # Ejercicio 1: se agregaron el Servidor 4 y el Servidor 5
 servers = [
     {"id": 1, "name": "Servidor 1", "active": True, "requests": 0},
@@ -37,9 +26,7 @@ servers = [
 current_index = 0
 
 
-# -------------------------------------------------------
 # Algoritmo Round Robin
-# -------------------------------------------------------
 def get_next_server():
     global current_index
     total = len(servers)
@@ -53,9 +40,7 @@ def get_next_server():
     return None
 
 
-# -------------------------------------------------------
 # Endpoints de la API
-# -------------------------------------------------------
 
 @app.get("/servers")
 def get_servers():
@@ -112,9 +97,7 @@ def server_up(server_id: int):
     )
 
 
-# -------------------------------------------------------
 # Ejercicio 2: reiniciar contadores de peticiones
-# -------------------------------------------------------
 @app.post("/servers/reset")
 def reset_servers():
     for server in servers:
@@ -125,10 +108,11 @@ def reset_servers():
     }
 
 
-# -------------------------------------------------------
 # Ejercicio 3: devolver únicamente los servidores activos
-# -------------------------------------------------------
 @app.get("/servers/active")
 def get_active_servers():
-    activos = [server for server in servers if server["active"]]
+    activos = []
+    for server in servers:
+        if server["active"] == True:
+            activos.append(server)
     return activos
